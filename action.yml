@@ -38,7 +38,7 @@ runs:
       if: ${{ inputs.mock-approvers }}
 
     - run: |
-        approvals_count=0
+        declare -i approvals_count=0
         maintainers_padded=" ${{ inputs.maintainers }} " # Padding before and after for substring safety check below
         maintainer_approvals=""
         for user in $approvers; do
