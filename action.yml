@@ -35,7 +35,7 @@ runs:
       shell: bash
 
     - run: |
-        reviewers=$(curl -s -H "Authorization: token ${{ input.token }}" \
+        reviewers=$(curl -s -H "Authorization: token ${{ inputs.token }}" \
         "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.pull_request.number }}/reviews")
 
         approvers=$(echo "$reviewers" | jq -r '.[] | select(.state == "APPROVED") | .user.login')
