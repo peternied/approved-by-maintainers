@@ -25,13 +25,6 @@ runs:
   using: "composite"
   steps:
     - run: |
-        if [[ ! -e ${{ inputs.maintainers-file }} ]]; then
-            echo "::error::Error: ${{ inputs.maintainers-file }} does not exist."
-            exit 1
-        fi
-      shell: bash
-
-    - run: |
         reviewers=$(curl -s -H "Authorization: token ${{ inputs.token }}" \
         "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.pull_request.number }}/reviews")
 
