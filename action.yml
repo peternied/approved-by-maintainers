@@ -44,7 +44,7 @@ runs:
         for user in $approvers; do
           # Match with strings padding the username on both sides to avoid substring matches
           # e.g. maintainer named 'foo', someone creates a fake account named 'fake-foo' and approves
-          if [[ maintainers_padded == *" $user "* ]]; then
+          if [[ $maintainers_padded == *" $user "* ]]; then
             echo "Approval by maintainer: $user"
             maintainer_approvals="$maintainer_approvals $user"
             ((approvals_count++))
