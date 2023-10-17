@@ -31,7 +31,8 @@ runs:
         fi
       shell: bash
 
-    - run: echo "maintainers=$(awk '/^## Current Maintainers$/,/^##/{print}' ${{ inputs.maintainers-file }} | grep 'github.com/' | awk -F'(' '{print $2}' | awk -F')' '{print $1}' | awk -F'/' '{print $NF}')" >> $GITHUB_ENV
+    - run: |
+        echo "maintainers=$(awk '/## Current Maintainers/ {flag=1; next} flag && /^\|/ {print $3} !/^\|/ && flag {exit}' ${{ inputs.maintainers-file }} | grep -oP '\[\K([^\]]+)')" >> $GITHUB_ENV
       shell: bash
 
     - run: |
