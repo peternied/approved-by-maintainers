@@ -48,25 +48,25 @@ runs:
       if: ${{ inputs.mock-approvers }}
 
     - run: |
-        approvals-count=0
-        maintainer-approvals=""
+        approvals_count=0
+        maintainer_approvals=""
         for user in $approvers; do
           if [[ $MAINTAINERS =~ $user ]]; then
             echo "Approval by maintainer: $user"
-            maintainer-approvals="$maintainer-approvals $user"
-            ((approvals-count++))
+            maintainer_approvals="$maintainer_approvals $user"
+            ((approvals_count++))
           fi
         done
-        echo "maintainer-approvals=$maintainer-approvals" >> $GITHUB_OUTPUT
+        echo "maintainer-approvals=$maintainer_approvals" >> $GITHUB_OUTPUT
 
-        if [[ $approvals-count -eq 0 ]]; then
+        if [[ $approvals_count -eq 0 ]]; then
           echo "No approvals by listed maintainers."
           exit 1
-        elif [[ $approvals-count -lt ${{ inputs.min-required }} ]]; then
-          echo "::error::Not enough approvals by listed maintainers. Only $approvals-count out of required ${{ inputs.min-required }}."
+        elif [[ $approvals_count -lt ${{ inputs.min-required }} ]]; then
+          echo "::error::Not enough approvals by listed maintainers. Only $approvals_count out of required ${{ inputs.min-required }}."
           exit 1
         else
-          echo "Received $approvals-count out of required ${{ inputs.min-required }} approvals by listed maintainers."
+          echo "Received $approvals_count out of required ${{ inputs.min-required }} approvals by listed maintainers."
         fi
       shell: bash
       id: approval-check
