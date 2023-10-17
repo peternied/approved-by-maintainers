@@ -47,7 +47,7 @@ runs:
           if [[ $maintainers_padded == *" $user "* ]]; then
             echo "Approval by maintainer: $user"
             maintainer_approvals="$maintainer_approvals $user"
-            ((approvals_count++))
+            (($approvals_count++))
           fi
         done
         echo "maintainer-approvals=$maintainer_approvals" >> $GITHUB_OUTPUT
