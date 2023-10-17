@@ -81,9 +81,26 @@ jobs:
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers: 'peternied greengiant'
+            maintainers: 'peternied, greengiant'
             min-required: 2
             mock-approvers: 'peternied'
+        
+        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+
+  test-approvers-match-strange-maintainers-spacing:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+    
+        - id: approved-by-maintainers
+          continue-on-error: true
+          uses: ./ # Use the action
+          with: 
+            token: ${{ secrets.GITHUB_TOKEN }}
+            maintainers: 'peternied, greengiant,  austin,     billyjean robert'
+            min-required: 4
+            mock-approvers: 'peternied greengiant austin billyjean robert'
         
         - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
           run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"

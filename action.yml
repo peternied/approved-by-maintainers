@@ -7,7 +7,7 @@ inputs:
     description: "GitHub token used for authentication"
     required: true
   maintainers:
-    description: 'The list of maintainers that can approve the request, space seperated'
+    description: 'The list of maintainers that can approve the request, comma seperated'
     required: false
   min-required:
     description: 'The minimum number of maintainers required to approve, e.g. 2'
@@ -39,7 +39,7 @@ runs:
 
     - run: |
         declare -i approvals_count=0
-        maintainers_padded=" ${{ inputs.maintainers }} " # Padding before and after for substring safety check below
+        maintainers_padded=" $(echo ${{ inputs.maintainers }} | tr ',' ' ' | sed s/ \+/ /g)  " # Padding before and after for substring safety check below
         maintainer_approvals=""
         for user in $approvers; do
           # Match with strings padding the username on both sides to avoid substring matches
