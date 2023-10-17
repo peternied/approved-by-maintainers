@@ -14,7 +14,7 @@ jobs:
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers-file: ./MAINTAINERS-Simple.md
+            maintainers: peternied
             min-required: 1
             mock-approvers: 'peternied'
         
@@ -30,7 +30,7 @@ jobs:
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers-file: ./MAINTAINERS-Simple.md
+            maintainers: peternied
             min-required: 1
             mock-approvers: 'peternied greengiant'
         
@@ -46,7 +46,7 @@ jobs:
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers-file: ./MAINTAINERS-Simple.md
+            maintainers: peternied
             min-required: 1
             mock-approvers: ''
         
@@ -62,7 +62,7 @@ jobs:
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers-file: ./MAINTAINERS-Simple.md
+            maintainers: peternied
             min-required: 1
             mock-approvers: 'greengiant'
         
@@ -78,7 +78,7 @@ jobs:
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers-file: ./MAINTAINERS-Simple.md
+            maintainers: 'peternied greengiant'
             min-required: 2
             mock-approvers: 'peternied'
         

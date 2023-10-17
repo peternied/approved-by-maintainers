@@ -6,8 +6,8 @@ inputs:
   token:
     description: "GitHub token used for authentication"
     required: true
-  maintainers-file:
-    description: 'The file where the maintainers are listed, defaults to MAINTAINERS.md'
+  maintainers:
+    description: 'The list of maintainers that can approve the request, space seperated'
     required: false
   min-required:
     description: 'The minimum number of maintainers required to approve, e.g. 2'
@@ -32,10 +32,6 @@ runs:
       shell: bash
 
     - run: |
-        echo "maintainers=$(awk '/## Current Maintainers/ {flag=1; next} flag && /^\|/ {print $3} !/^\|/ && flag {exit}' ${{ inputs.maintainers-file }} | grep -oP '\[\K([^\]]+)')" >> $GITHUB_ENV
-      shell: bash
-
-    - run: |
         reviewers=$(curl -s -H "Authorization: token ${{ inputs.token }}" \
         "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.pull_request.number }}/reviews")
 
@@ -50,9 +46,12 @@ runs:
 
     - run: |
         approvals_count=0
+        maintainers-padded=" ${{ inputs.maintainers }} " # Padding before and after for substring safety check below
         maintainer_approvals=""
         for user in $approvers; do
-          if [[ $MAINTAINERS =~ $user ]]; then
+          # Match with strings padding the username on both sides to avoid substring matches
+          # e.g. maintainer named 'foo', someone creates a fake account named 'fake-foo' and approves
+          if [[ maintainers-padded == *" $user "* ]]; then
             echo "Approval by maintainer: $user"
             maintainer_approvals="$maintainer_approvals $user"
             ((approvals_count++))

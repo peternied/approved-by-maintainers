@@ -6,8 +6,8 @@ inputs:
   token:
     description: "GitHub token used for authentication"
     required: true
-  maintainers-file:
-    description: 'The file where the maintainers are listed, defaults to MAINTAINERS.md'
+  maintainers:
+    description: 'The list of maintainers that can approve the request, space seperated'
     required: false
   min-required:
     description: 'The minimum number of maintainers required to approve, e.g. 2'
@@ -24,6 +24,9 @@ on:
     types: [opened, reopened]
 ...
 steps:
+- id: find-maintainers
+  run: echo "maintainers=$(cat C:/Users/peter/Documents/GitHub/OpenSearch/MAINTAINERS.md | grep -oP '(?<=\[).+(?=\]\(http)' | tr '\n' ' ')" >> $GITHUB_ENV
+
 - uses: peternied/approved-by-maintainers@v1
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
