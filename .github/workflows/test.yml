@@ -43,12 +43,13 @@ jobs:
         - uses: actions/checkout@v4
     
         - id: approved-by-maintainers
+          continue-on-error: true
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
             maintainers: peternied
             min-required: 1
-            mock-approvers: ''
+            mock-approvers: ' '
         
         - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != ''
           run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
@@ -59,6 +60,7 @@ jobs:
         - uses: actions/checkout@v4
     
         - id: approved-by-maintainers
+          continue-on-error: true
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
@@ -77,6 +79,7 @@ jobs:
         - id: approved-by-maintainers
           uses: ./ # Use the action
           with: 
+            continue-on-error: true
             token: ${{ secrets.GITHUB_TOKEN }}
             maintainers: 'peternied greengiant'
             min-required: 2
