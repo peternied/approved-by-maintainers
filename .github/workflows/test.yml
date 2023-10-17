@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-approved-exact:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+    
+        - id: approved-by-maintainers
+          uses: ./ # Use the action
+          with: 
+            maintainers-file: ./MAINTAINERS-Simple.md
+            min-required: 1
+            mock-approvers: 'peternied'
+        
+        - if: steps.approved-by-maintainers.outcome != 'success' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+
+  test-approved-exact-and-unimportant:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+    
+        - id: approved-by-maintainers
+          uses: ./ # Use the action
+          with: 
+            maintainers-file: ./MAINTAINERS-Simple.md
+            min-required: 1
+            mock-approvers: 'peternied greengiant'
+        
+        - if: steps.approved-by-maintainers.outcome != 'success' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+
+  test-unapproved-none:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+    
+        - id: approved-by-maintainers
+          uses: ./ # Use the action
+          with: 
+            maintainers-file: ./MAINTAINERS-Simple.md
+            min-required: 1
+            mock-approvers: ''
+        
+        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != ''
+          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+
+  test-unapproved-unimportant:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+    
+        - id: approved-by-maintainers
+          uses: ./ # Use the action
+          with: 
+            maintainers-file: ./MAINTAINERS-Simple.md
+            min-required: 1
+            mock-approvers: 'greengiant'
+        
+        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != ''
+          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+
+  test-approved-too-few:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+    
+        - id: approved-by-maintainers
+          uses: ./ # Use the action
+          with: 
+            maintainers-file: ./MAINTAINERS-Simple.md
+            min-required: 2
+            mock-approvers: 'peternied'
+        
+        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"

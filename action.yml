@@ -1,0 +1,69 @@
+name: 'Approved By Maintainers'
+
+description: 'Verifies that this pull request has been approved by maintainers'
+
+inputs:
+  maintainers-file:
+    description: 'The file where the maintainers are listed, defaults to MAINTAINERS.md'
+    required: false
+  min-required:
+    description: 'The minimum number of maintainers required to approve, e.g. 2'
+    required: true
+  mock-approvers:
+    description: 'Used only for testing'
+    required: false
+
+outputs:
+  maintainer-approvals:
+    description: "The list of maintainers that approved"
+    value: ${{ steps.approval-check.outputs.maintainer-approvals }}
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        if [[ ! -e ${{ inputs.maintainers-file }} ]]; then
+            echo "::error::Error: ${{ inputs.maintainers-file }} does not exist."
+            exit 1
+        fi
+      shell: bash
+
+    - run: echo "maintainers=$(awk '/^## Current Maintainers$/,/^##/{print}' ${{ inputs.maintainers-file }} | grep 'github.com/' | awk -F'(' '{print $2}' | awk -F')' '{print $1}' | awk -F'/' '{print $NF}')" >> $GITHUB_ENV
+      shell: bash
+
+    - run: |
+        reviewers=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.pull_request.number }}/reviews")
+
+        approvers=$(echo "$reviewers" | jq -r '.[] | select(.state == "APPROVED") | .user.login')
+        echo "approvers=$approvers" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ !inputs.mock-approvers }}
+    
+    - run: echo "approvers=${{ inputs.mock-approvers }}" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.mock-approvers }}
+
+    - run: |
+        approvals-count=0
+        maintainer-approvals=""
+        for user in $approvers; do
+          if [[ $MAINTAINERS =~ $user ]]; then
+            echo "Approval by maintainer: $user"
+            maintainer-approvals="$maintainer-approvals $user"
+            ((approvals-count++))
+          fi
+        done
+        echo "maintainer-approvals=$maintainer-approvals" >> $GITHUB_OUTPUT
+
+        if [[ $approvals-count -eq 0 ]]; then
+          echo "No approvals by listed maintainers."
+          exit 1
+        elif [[ $approvals-count -lt ${{ inputs.min-required }} ]]; then
+          echo "::error::Not enough approvals by listed maintainers. Only $approvals-count out of required ${{ inputs.min-required }}."
+          exit 1
+        else
+          echo "Received $approvals-count out of required ${{ inputs.min-required }} approvals by listed maintainers."
+        fi
+      shell: bash
+      id: approval-check
