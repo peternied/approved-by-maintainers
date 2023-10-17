@@ -13,6 +13,7 @@ jobs:
         - id: approved-by-maintainers
           uses: ./ # Use the action
           with: 
+            token: ${{ secrets.GITHUB_TOKEN }}
             maintainers-file: ./MAINTAINERS-Simple.md
             min-required: 1
             mock-approvers: 'peternied'
@@ -28,6 +29,7 @@ jobs:
         - id: approved-by-maintainers
           uses: ./ # Use the action
           with: 
+            token: ${{ secrets.GITHUB_TOKEN }}
             maintainers-file: ./MAINTAINERS-Simple.md
             min-required: 1
             mock-approvers: 'peternied greengiant'
@@ -43,6 +45,7 @@ jobs:
         - id: approved-by-maintainers
           uses: ./ # Use the action
           with: 
+            token: ${{ secrets.GITHUB_TOKEN }}
             maintainers-file: ./MAINTAINERS-Simple.md
             min-required: 1
             mock-approvers: ''
@@ -58,6 +61,7 @@ jobs:
         - id: approved-by-maintainers
           uses: ./ # Use the action
           with: 
+            token: ${{ secrets.GITHUB_TOKEN }}
             maintainers-file: ./MAINTAINERS-Simple.md
             min-required: 1
             mock-approvers: 'greengiant'
@@ -73,6 +77,7 @@ jobs:
         - id: approved-by-maintainers
           uses: ./ # Use the action
           with: 
+            token: ${{ secrets.GITHUB_TOKEN }}
             maintainers-file: ./MAINTAINERS-Simple.md
             min-required: 2
             mock-approvers: 'peternied'

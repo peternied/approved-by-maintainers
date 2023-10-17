@@ -3,6 +3,9 @@ Github action to verify that maintainers have approved this PR
 
 ```yaml
 inputs:
+  token:
+    description: "GitHub token used for authentication"
+    required: true
   maintainers-file:
     description: 'The file where the maintainers are listed, defaults to MAINTAINERS.md'
     required: false
@@ -23,6 +26,7 @@ on:
 steps:
 - uses: peternied/approved-by-maintainers@v1
   with:
+    token: ${{ secrets.GITHUB_TOKEN }}
     min-required: 1
 ```
 
