@@ -6,12 +6,17 @@ inputs:
   token:
     description: "GitHub token used for authentication"
     required: true
-  specific-approvers:
-    description: 'The list of specific users that can approve the request, comma seperated.'
+  required-approvers-list:
+    description: 'The list of specific users that can approve the request, comma seperated. '
     required: false
   min-required:
     description: 'The minimum number of approvals, e.g. 2'
     required: true
+
+outputs:
+  specific-approvals:
+    description: "The list of users that approved"
+    value: ${{ steps.approval-check.outputs.approvers }}
 ```
 
 ## Usage:
@@ -31,7 +36,7 @@ steps:
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
     min-required: 1
-    specific-approvers: ${{ steps.list-maintainers.outputs.maintainers }}
+    required-approvers-list: ${{ steps.list-maintainers.outputs.maintainers }}
 ```
 
 # Changelog
