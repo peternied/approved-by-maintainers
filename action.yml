@@ -55,7 +55,7 @@ runs:
           echo "::error::Not enough approvals. Only $approvals_count out of required ${{ inputs.min-required }}."
           exit 1
         elif [[ ! -z "$required_approvers_list" ]] && [[ $approvals_count -eq 0 ]]; then
-          echo "No approvals from the required approvers."
+          echo "::error::No approvals from the required approvers."
           exit 1
         elif [[ ! -z "$required_approvers_list" ]] && [[ $approvals_count -lt ${{ inputs.min-required }} ]]; then
           echo "::error::Not enough approvals by required approvers. Only $approvals_count out of required ${{ inputs.min-required }}."
