@@ -1,16 +1,16 @@
-# approved-by-maintainers
-Github action to verify that maintainers have approved this PR
+# required-approval
+Github action to verify the kinds of approvals on this PR.  Useful to work around CODEOWNERS and min approvers settings that are typically only visible to project admins. 
 
 ```yaml
 inputs:
   token:
     description: "GitHub token used for authentication"
     required: true
-  maintainers:
-    description: 'The list of maintainers that can approve the request, comma seperated'
+  specific-approvers:
+    description: 'The list of specific users that can approve the request, comma seperated.'
     required: false
   min-required:
-    description: 'The minimum number of maintainers required to approve, e.g. 2'
+    description: 'The minimum number of approvals, e.g. 2'
     required: true
 ```
 
@@ -24,13 +24,14 @@ on:
     types: [opened, reopened]
 ...
 steps:
-- id: find-maintainers
+- id: list-maintainers
   run: echo "maintainers='danny, ricky, bobby'" >> $GITHUB_ENV
 
-- uses: peternied/approved-by-maintainers@v1
+- uses: peternied/required-approval@v1
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
     min-required: 1
+    specific-approvers: ${{ steps.list-maintainers.outputs.maintainers }}
 ```
 
 # Changelog
