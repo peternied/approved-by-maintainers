@@ -1,25 +1,25 @@
-name: 'Approved By Maintainers'
+name: 'Required Approval'
 
-description: 'Verifies that this pull request has been approved by maintainers'
+description: 'Verifies that this pull request has been approved by of required individuals'
 
 inputs:
   token:
     description: "GitHub token used for authentication"
     required: true
-  maintainers:
-    description: 'The list of maintainers that can approve the request, comma seperated'
+  required-approvers-list:
+    description: 'The list of specific users that can approve the request, comma seperated. '
     required: false
   min-required:
-    description: 'The minimum number of maintainers required to approve, e.g. 2'
+    description: 'The minimum number of approvals, e.g. 2'
     required: true
   mock-approvers:
     description: 'Used only for testing'
     required: false
 
 outputs:
-  maintainer-approvals:
-    description: "The list of maintainers that approved"
-    value: ${{ steps.approval-check.outputs.maintainer-approvals }}
+  specific-approvals:
+    description: "The list of users that approved"
+    value: ${{ steps.approval-check.outputs.approvers }}
 
 runs:
   using: "composite"
@@ -39,27 +39,29 @@ runs:
 
     - run: |
         declare -i approvals_count=0
-        maintainers_padded=" $(echo ${{ inputs.maintainers }} | tr ',' ' ' | sed 's/  */ /g')  " # Padding before and after for substring safety check below
-        maintainer_approvals=""
+        required_approvers_list="${{ inputs.required-approvers-list }}"
+        required_approvers_padded=" $(echo $required_approvers_list | tr ',' ' ' | sed 's/  */ /g')  " # Padding before and after for substring safety check below
+        required_approvers_approvals=""
         for user in $approvers; do
-          # Match with strings padding the username on both sides to avoid substring matches
-          # e.g. maintainer named 'foo', someone creates a fake account named 'fake-foo' and approves
-          if [[ $maintainers_padded == *" $user "* ]]; then
-            echo "Approval by maintainer: $user"
-            maintainer_approvals="$maintainer_approvals $user"
+          if [[ -z "$required_approvers_list" ]] || [[ $required_approvers_padded == *" $user "* ]]; then
+            echo "Approval by user: $user"
+            required_approvers_approvals="$required_approvers_approvals $user"
             approvals_count=$((approvals_count + 1))
           fi
         done
-        echo "maintainer-approvals=$maintainer_approvals" >> $GITHUB_OUTPUT
+        echo "approvers=$required_approvers_approvals" >> $GITHUB_OUTPUT
 
-        if [[ $approvals_count -eq 0 ]]; then
-          echo "No approvals by listed maintainers."
+        if [[ -z "$required_approvers_list" ]] && [[ $approvals_count -lt ${{ inputs.min-required }} ]]; then
+          echo "::error::Not enough approvals. Only $approvals_count out of required ${{ inputs.min-required }}."
           exit 1
-        elif [[ $approvals_count -lt ${{ inputs.min-required }} ]]; then
-          echo "::error::Not enough approvals by listed maintainers. Only $approvals_count out of required ${{ inputs.min-required }}."
+        elif [[ ! -z "$required_approvers_list" ]] && [[ $approvals_count -eq 0 ]]; then
+          echo "No approvals from the required approvers."
+          exit 1
+        elif [[ ! -z "$required_approvers_list" ]] && [[ $approvals_count -lt ${{ inputs.min-required }} ]]; then
+          echo "::error::Not enough approvals by required approvers. Only $approvals_count out of required ${{ inputs.min-required }}."
           exit 1
         else
-          echo "Received $approvals_count out of required ${{ inputs.min-required }} approvals by listed maintainers."
+          echo "Received $approvals_count out of required ${{ inputs.min-required }} approvals."
         fi
       shell: bash
       id: approval-check
