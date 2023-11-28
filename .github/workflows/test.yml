@@ -10,97 +10,112 @@ jobs:
     steps:
         - uses: actions/checkout@v4
     
-        - id: approved-by-maintainers
+        - id: approved-by-required-users
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers: peternied
+            required-approvers-list: peternied
             min-required: 1
             mock-approvers: 'peternied'
         
-        - if: steps.approved-by-maintainers.outcome != 'success' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
-          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+        - if: steps.approved-by-required-users.outcome != 'success' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
 
   test-approved-exact-and-unimportant:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
     
-        - id: approved-by-maintainers
+        - id: approved-by-required-users
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers: peternied
+            required-approvers-list: peternied
             min-required: 1
             mock-approvers: 'peternied greengiant'
         
-        - if: steps.approved-by-maintainers.outcome != 'success' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
-          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+        - if: steps.approved-by-required-users.outcome != 'success' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
 
   test-unapproved-none:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
     
-        - id: approved-by-maintainers
+        - id: approved-by-required-users
           continue-on-error: true
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers: peternied
+            required-approvers-list: peternied
             min-required: 1
             mock-approvers: ' '
         
-        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != ''
-          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+        - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != ''
+          run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
 
   test-unapproved-unimportant:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
     
-        - id: approved-by-maintainers
+        - id: approved-by-required-users
           continue-on-error: true
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers: peternied
+            required-approvers-list: peternied
             min-required: 1
             mock-approvers: 'greengiant'
         
-        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != ''
-          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+        - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != ''
+          run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
 
   test-approved-too-few:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
     
-        - id: approved-by-maintainers
+        - id: approved-by-required-users
           continue-on-error: true
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers: 'peternied, greengiant'
+            required-approvers-list: 'peternied, greengiant'
             min-required: 2
             mock-approvers: 'peternied'
         
-        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
-          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+        - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
 
-  test-approvers-match-strange-maintainers-spacing:
+  test-approvers-match-strange-required-users-spacing:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
     
-        - id: approved-by-maintainers
+        - id: approved-by-required-users
           continue-on-error: true
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
-            maintainers: 'peternied, greengiant,  austin,     billyjean robert'
+            required-approvers-list: 'peternied, greengiant,  austin,     billyjean robert'
             min-required: 4
             mock-approvers: 'peternied greengiant austin billyjean robert'
         
-        - if: steps.approved-by-maintainers.outcome != 'failure' || steps.approved-by-maintainers.outputs.maintainer-approvals != 'peternied'
-          run: echo "Unexpected outcome:${{ steps.approved-by-maintainers.outcome }} or maintainer-approvals:${{steps.approved-by-maintainers.outputs.maintainer-approvals}}"
+        - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
+          run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
+
+  test-approved-by-anyone:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+    
+        - id: approved-by-required-users
+          uses: ./ # Use the action
+          with: 
+            token: ${{ secrets.GITHUB_TOKEN }}
+            min-required: 2
+            mock-approvers: 'peternied bob kelly'
+        
+        - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied bob kelly'
+          run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
