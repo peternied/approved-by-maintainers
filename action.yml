@@ -2,6 +2,10 @@ name: 'Required Approval'
 
 description: 'Verifies that this pull request has been approved by of required individuals'
 
+branding:
+  icon: 
+  color: green
+
 inputs:
   token:
     description: "GitHub token used for authentication"
@@ -20,6 +24,10 @@ outputs:
   specific-approvals:
     description: "The list of users that approved"
     value: ${{ steps.approval-check.outputs.approvers }}
+
+runs:
+  using: node16
+  main: dist/index.js
 
 runs:
   using: "composite"
