@@ -3,31 +3,42 @@ import github from "@actions/github";
 
 async function run() {
   const token = core.getInput('token', { required: true });
-  const pullRequest: number = github.context.payload.pull_request?.number || -1;
-  const minRequiredApprovals: number = core.getInput('min-required', { required: true });
+  if (!token) {
+    core.setFailed(`Input parameter 'token' is required`);
+    return;
+  }
+
+  const minRequiredStr = core.getInput('min-required', { required: true })
+  if (!minRequiredStr) {
+    core.setFailed(`Input parameter 'min-required' is required`);
+    return;
+  }
+  const minRequired = parseInt(minRequiredStr);
+
+  const pullRequestId = github.context.payload.pull_request?.number;
+  if (!pullRequestId) {
+    core.setFailed(`Unable to find associated pull request from the context: ${JSON.stringify(github.context)}`);
+    return;
+  }
 
   const requiredApprovers: string[] = core.getInput('required-approvers-list', { required: false })?.split(',').map(s => s.trim()) || [];
   const mockApprovers: string[] = core.getInput('mock-approvers', { required: false })?.split(' ') || [];
 
-  if (pullRequest == -1) {
-    core.setFailed(`Unable to find associated pull request from the context: ${JSON.stringify(github.context)}`);
-    return;    
-  }
-
-  const pullRequestApprovers = mockApprovers ? mockApprovers : await (async () => {
+  let pullRequestApprovers = mockApprovers;
+  if (!pullRequestApprovers) {
     const client = github.getOctokit(token);
     const { data: reviewers } = await client.rest.pulls.listReviews({
-        pull_number: pullRequest,
+        pull_number: pullRequestId,
         owner: github.context.repo.owner,
         repo: github.context.repo.repo
     });
 
     const approvers: string[] = reviewers
-        .filter(reviewer => reviewer.state == 'APPROVED')
-        .map(reviewer => reviewer.user?.login || "TODO: FIX THIS??")
+        .filter(reviewer => reviewer.state === 'APPROVED' && reviewer.user?.login)
+        .map(reviewer => reviewer.user!.login)
 
-    return approvers;
-    })();
+    pullRequestApprovers = approvers;
+  }
 
   const acceptedApprovers: string[] = [];
   pullRequestApprovers.forEach(approver => {
@@ -37,8 +48,8 @@ async function run() {
   });
   core.info(`Found approvals from ${acceptedApprovers.join(', ')}`)
 
-  if (acceptedApprovers.length < minRequiredApprovals) {
-    core.setFailed(`Not enough approvals; has ${acceptedApprovers.length} where ${minRequiredApprovals} approvals are required.`);
+  if (acceptedApprovers.length < minRequired) {
+    core.setFailed(`Not enough approvals; has ${acceptedApprovers.length} where ${minRequired} approvals are required.`);
   } else {
     core.info(`Meets  minimum number of approvals requirement with ${acceptedApprovers.length} approvals`);
   }
