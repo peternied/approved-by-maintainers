@@ -36750,7 +36750,7 @@ async function run() {
 
     pullRequestApprovers = approvers;
   } else {
-    pullRequestApprovers = mockApprovers.split(' ');
+    pullRequestApprovers = mockApproversString.split(' ');
   }
 
   const acceptedApprovers = [];
