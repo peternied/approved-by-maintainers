@@ -36724,7 +36724,7 @@ async function run() {
   }
   const minRequired = parseInt(minRequiredStr);
 
-  const pullRequestId = github.context.payload.pull_request?.number;
+  const pullRequestId = github.context.payload.pull_request?.number || core.getInput('mock-pr-number', { required: false });
   if (!pullRequestId) {
     core.setFailed(`Unable to find associated pull request from the context: ${JSON.stringify(github.context)}`);
     return;

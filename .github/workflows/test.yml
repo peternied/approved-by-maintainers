@@ -17,6 +17,7 @@ jobs:
             required-approvers-list: peternied
             min-required: 1
             mock-approvers: 'peternied'
+            mock-pr-number: 42
         
         - if: steps.approved-by-required-users.outcome != 'success' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
@@ -33,6 +34,7 @@ jobs:
             required-approvers-list: peternied
             min-required: 1
             mock-approvers: 'peternied greengiant'
+            mock-pr-number: 42
         
         - if: steps.approved-by-required-users.outcome != 'success' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
@@ -50,6 +52,7 @@ jobs:
             required-approvers-list: peternied
             min-required: 1
             mock-approvers: ' '
+            mock-pr-number: 42
         
         - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != ''
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
@@ -67,6 +70,7 @@ jobs:
             required-approvers-list: peternied
             min-required: 1
             mock-approvers: 'greengiant'
+            mock-pr-number: 42
         
         - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != ''
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
@@ -84,6 +88,7 @@ jobs:
             required-approvers-list: 'peternied, greengiant'
             min-required: 2
             mock-approvers: 'peternied'
+            mock-pr-number: 42
         
         - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
@@ -101,6 +106,7 @@ jobs:
             required-approvers-list: 'peternied, greengiant,  austin,     billyjean robert'
             min-required: 4
             mock-approvers: 'peternied greengiant austin billyjean robert'
+            mock-pr-number: 42
         
         - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied'
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
@@ -116,6 +122,7 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
             min-required: 2
             mock-approvers: 'peternied bob kelly'
+            mock-pr-number: 42
         
         - if: steps.approved-by-required-users.outcome != 'failure' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied bob kelly'
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"
