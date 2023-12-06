@@ -36731,10 +36731,10 @@ async function run() {
   }
 
   const requiredApprovers = core.getInput('required-approvers-list', { required: true })?.split(',').map(s => s.trim()).filter(a => a.length != 0);
-  const mockApprovers = core.getInput('mock-approvers', { required: false })?.split(' ') || [];
+  const mockApproversString = core.getInput('mock-approvers', { required: false, trimWhitespace: false });
 
-  let pullRequestApprovers = mockApprovers;
-  if (!pullRequestApprovers) {
+  let pullRequestApprovers;
+  if (mockApproversString !== "") {
     const client = github.getOctokit(token);
     const { data: reviewers } = await client.rest.pulls.listReviews({
         pull_number: pullRequestId,
@@ -36749,6 +36749,8 @@ async function run() {
     console.log(`filered to approvers:\n ${JSON.stringify(approvers)}`);
 
     pullRequestApprovers = approvers;
+  } else {
+    pullRequestApprovers = mockApprovers.split(' ');
   }
 
   const acceptedApprovers = [];
