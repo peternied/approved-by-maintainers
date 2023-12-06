@@ -36699,93 +36699,47 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(5438);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
-
-
+const core = __nccwpck_require__(2186);
+const github = __nccwpck_require__(5438);
 
 async function run() {
-  const token = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput('token', { required: true });
+  const token = core.getInput('token', { required: true });
   if (!token) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(`Input parameter 'token' is required`);
+    core.setFailed(`Input parameter 'token' is required`);
     return;
   }
 
-  const minRequiredStr = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput('min-required', { required: true })
+  const minRequiredStr = core.getInput('min-required', { required: true })
   if (!minRequiredStr) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(`Input parameter 'min-required' is required`);
+    core.setFailed(`Input parameter 'min-required' is required`);
     return;
   }
   const minRequired = parseInt(minRequiredStr);
 
-  const pullRequestId = (_actions_github__WEBPACK_IMPORTED_MODULE_1___default().context.payload.pull_request)?.number;
+  const pullRequestId = github.context.payload.pull_request?.number;
   if (!pullRequestId) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(`Unable to find associated pull request from the context: ${JSON.stringify((_actions_github__WEBPACK_IMPORTED_MODULE_1___default().context))}`);
+    core.setFailed(`Unable to find associated pull request from the context: ${JSON.stringify(github.context)}`);
     return;
   }
 
-  const requiredApprovers = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput('required-approvers-list', { required: false })?.split(',').map(s => s.trim()) || [];
-  const mockApprovers = _actions_core__WEBPACK_IMPORTED_MODULE_0___default().getInput('mock-approvers', { required: false })?.split(' ') || [];
+  const requiredApprovers = core.getInput('required-approvers-list', { required: false })?.split(',').map(s => s.trim()) || [];
+  const mockApprovers = core.getInput('mock-approvers', { required: false })?.split(' ') || [];
 
   let pullRequestApprovers = mockApprovers;
   if (!pullRequestApprovers) {
-    const client = _actions_github__WEBPACK_IMPORTED_MODULE_1___default().getOctokit(token);
+    const client = github.getOctokit(token);
     const { data: reviewers } = await client.rest.pulls.listReviews({
         pull_number: pullRequestId,
-        owner: (_actions_github__WEBPACK_IMPORTED_MODULE_1___default().context.repo.owner),
-        repo: (_actions_github__WEBPACK_IMPORTED_MODULE_1___default().context.repo.repo)
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo
     });
 
     const approvers = reviewers
@@ -36801,12 +36755,12 @@ async function run() {
         acceptedApprovers.push(approver);
     }
   });
-  _actions_core__WEBPACK_IMPORTED_MODULE_0___default().info(`Found approvals from ${acceptedApprovers.join(', ')}`)
+  core.info(`Found approvals from ${acceptedApprovers.join(', ')}`)
 
   if (acceptedApprovers.length < minRequired) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_0___default().setFailed(`Not enough approvals; has ${acceptedApprovers.length} where ${minRequired} approvals are required.`);
+    core.setFailed(`Not enough approvals; has ${acceptedApprovers.length} where ${minRequired} approvals are required.`);
   } else {
-    _actions_core__WEBPACK_IMPORTED_MODULE_0___default().info(`Meets  minimum number of approvals requirement with ${acceptedApprovers.length} approvals`);
+    core.info(`Meets  minimum number of approvals requirement with ${acceptedApprovers.length} approvals`);
   }
 }
 
