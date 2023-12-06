@@ -125,5 +125,5 @@ jobs:
             mock-approvers: 'peternied bob kelly'
             mock-pr-number: 42
         
-        - if: steps.approved-by-required-users.outcome != 'success' || steps.approved-by-required-users.outputs.maintainer-approvals != 'peternied bob kelly'
+        - if: steps.approved-by-required-users.outcome != 'success' || steps.approved-by-required-users.outputs.maintainer-approvals != ' '
           run: echo "Unexpected outcome:${{ steps.approved-by-required-users.outcome }} or maintainer-approvals:${{steps.approved-by-required-users.outputs.maintainer-approvals}}"

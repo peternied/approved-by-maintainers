@@ -32,10 +32,12 @@ async function run() {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo
     });
+    console.log(`listReviews response:\n ${JSON.stringify(reviewers)}`);
 
     const approvers = reviewers
         .filter(reviewer => reviewer.state === 'APPROVED' && reviewer.user?.login)
         .map(reviewer => reviewer.user?.login)
+    console.log(`filered to approvers:\n ${JSON.stringify(approvers)}`);
 
     pullRequestApprovers = approvers;
   }
