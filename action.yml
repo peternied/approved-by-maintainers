@@ -19,6 +19,9 @@ inputs:
   mock-approvers:
     description: 'Used only for testing'
     required: false
+  mock-pr-number:
+    description: 'Used only for testing'
+    required: false
 
 outputs:
   specific-approvals:

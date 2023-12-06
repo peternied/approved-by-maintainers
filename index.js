@@ -42,7 +42,7 @@ async function run() {
 
   const acceptedApprovers = [];
   pullRequestApprovers.forEach(approver => {
-    if (!requiredApprovers || requiredApprovers.filter(required => required === approver).length != 0) {
+    if (!requiredApprovers || !requiredApprovers.length || requiredApprovers.filter(required => required === approver).length != 0) {
         acceptedApprovers.push(approver);
     }
   });
