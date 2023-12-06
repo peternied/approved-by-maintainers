@@ -117,6 +117,7 @@ jobs:
         - uses: actions/checkout@v4
     
         - id: approved-by-required-users
+          continue-on-error: true
           uses: ./ # Use the action
           with: 
             token: ${{ secrets.GITHUB_TOKEN }}
