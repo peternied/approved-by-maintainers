@@ -8,7 +8,7 @@ inputs:
     required: true
   required-approvers-list:
     description: 'The list of specific users that can approve the request, comma seperated. '
-    required: false
+    required: true
   min-required:
     description: 'The minimum number of approvals, e.g. 2'
     required: true
@@ -24,9 +24,6 @@ outputs:
 ```yaml
 on:
   pull_request_review:
-    types: [approved]
-  pull_request_target:
-    types: [opened, reopened]
 ...
 steps:
 - id: list-maintainers

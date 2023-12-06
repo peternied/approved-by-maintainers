@@ -12,7 +12,7 @@ inputs:
     required: true
   required-approvers-list:
     description: 'The list of specific users that can approve the request, comma separated. '
-    required: false
+    required: true
   min-required:
     description: 'The minimum number of approvals, e.g. 2'
     required: true

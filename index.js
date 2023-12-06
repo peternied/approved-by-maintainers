@@ -21,7 +21,7 @@ async function run() {
     return;
   }
 
-  const requiredApprovers = core.getInput('required-approvers-list', { required: false })?.split(',').map(s => s.trim()) || [];
+  const requiredApprovers = core.getInput('required-approvers-list', { required: true })?.split(',').map(s => s.trim()).filter(a => a.length != 0);
   const mockApprovers = core.getInput('mock-approvers', { required: false })?.split(' ') || [];
 
   let pullRequestApprovers = mockApprovers;
