@@ -11,7 +11,7 @@ inputs:
     description: "GitHub token used for authentication"
     required: true
   required-approvers-list:
-    description: 'The list of specific users that can approve the request, comma seperated. '
+    description: 'The list of specific users that can approve the request, comma separated. '
     required: false
   min-required:
     description: 'The minimum number of approvals, e.g. 2'
@@ -28,48 +28,3 @@ outputs:
 runs:
   using: node16
   main: dist/index.js
-
-runs:
-  using: "composite"
-  steps:
-    - run: |
-        reviewers=$(curl -s -H "Authorization: token ${{ inputs.token }}" \
-        "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.pull_request.number }}/reviews")
-
-        approvers=$(echo "$reviewers" | jq -r '.[] | select(.state == "APPROVED") | .user.login')
-        echo "approvers=$approvers" >> $GITHUB_ENV
-      shell: bash
-      if: ${{ !inputs.mock-approvers }}
-    
-    - run: echo "approvers=${{ inputs.mock-approvers }}" >> $GITHUB_ENV
-      shell: bash
-      if: ${{ inputs.mock-approvers }}
-
-    - run: |
-        declare -i approvals_count=0
-        required_approvers_list="${{ inputs.required-approvers-list }}"
-        required_approvers_padded=" $(echo $required_approvers_list | tr ',' ' ' | sed 's/  */ /g')  " # Padding before and after for substring safety check below
-        required_approvers_approvals=""
-        for user in $approvers; do
-          if [[ -z "$required_approvers_list" ]] || [[ $required_approvers_padded == *" $user "* ]]; then
-            echo "Approval by user: $user"
-            required_approvers_approvals="$required_approvers_approvals $user"
-            approvals_count=$((approvals_count + 1))
-          fi
-        done
-        echo "approvers=$required_approvers_approvals" >> $GITHUB_OUTPUT
-
-        if [[ -z "$required_approvers_list" ]] && [[ $approvals_count -lt ${{ inputs.min-required }} ]]; then
-          echo "::error::Not enough approvals. Only $approvals_count out of required ${{ inputs.min-required }}."
-          exit 1
-        elif [[ ! -z "$required_approvers_list" ]] && [[ $approvals_count -eq 0 ]]; then
-          echo "::error::No approvals from the required approvers."
-          exit 1
-        elif [[ ! -z "$required_approvers_list" ]] && [[ $approvals_count -lt ${{ inputs.min-required }} ]]; then
-          echo "::error::Not enough approvals by required approvers. Only $approvals_count out of required ${{ inputs.min-required }}."
-          exit 1
-        else
-          echo "Received $approvals_count out of required ${{ inputs.min-required }} approvals."
-        fi
-      shell: bash
-      id: approval-check
