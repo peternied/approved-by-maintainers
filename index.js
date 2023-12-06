@@ -21,8 +21,8 @@ async function run() {
     return;
   }
 
-  const requiredApprovers: string[] = core.getInput('required-approvers-list', { required: false })?.split(',').map(s => s.trim()) || [];
-  const mockApprovers: string[] = core.getInput('mock-approvers', { required: false })?.split(' ') || [];
+  const requiredApprovers = core.getInput('required-approvers-list', { required: false })?.split(',').map(s => s.trim()) || [];
+  const mockApprovers = core.getInput('mock-approvers', { required: false })?.split(' ') || [];
 
   let pullRequestApprovers = mockApprovers;
   if (!pullRequestApprovers) {
@@ -33,14 +33,14 @@ async function run() {
         repo: github.context.repo.repo
     });
 
-    const approvers: string[] = reviewers
+    const approvers = reviewers
         .filter(reviewer => reviewer.state === 'APPROVED' && reviewer.user?.login)
-        .map(reviewer => reviewer.user!.login)
+        .map(reviewer => reviewer.user?.login)
 
     pullRequestApprovers = approvers;
   }
 
-  const acceptedApprovers: string[] = [];
+  const acceptedApprovers = [];
   pullRequestApprovers.forEach(approver => {
     if (!requiredApprovers || requiredApprovers.filter(required => required === approver).length != 0) {
         acceptedApprovers.push(approver);
