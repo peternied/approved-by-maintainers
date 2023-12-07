@@ -24,7 +24,6 @@ async function run() {
   const requiredApprovers = core.getInput('required-approvers-list', { required: true })?.split(',').map(s => s.trim()).filter(a => a.length != 0);
   const mockApproversString = core.getInput('mock-approvers', { required: false, trimWhitespace: false });
 
-  console.log(`mockApproversString: '${mockApproversString}'`);
   let pullRequestApprovers;
   if (mockApproversString.length == 0) {
     const client = github.getOctokit(token);
@@ -38,7 +37,7 @@ async function run() {
     const approvers = reviewers
         .filter(reviewer => reviewer.state === 'APPROVED' && reviewer.user?.login)
         .map(reviewer => reviewer.user?.login)
-    console.log(`filered to approvers:\n ${JSON.stringify(approvers)}`);
+    console.log(`filtered to approvers:\n ${JSON.stringify(approvers)}`);
 
     pullRequestApprovers = approvers;
   } else {
@@ -56,7 +55,7 @@ async function run() {
   if (acceptedApprovers.length < minRequired) {
     core.setFailed(`Not enough approvals; has ${acceptedApprovers.length} where ${minRequired} approvals are required.`);
   } else {
-    core.info(`Meets  minimum number of approvals requirement with ${acceptedApprovers.length} approvals`);
+    core.info(`Meets minimum number of approvals requirement with ${acceptedApprovers.length} approvals`);
   }
 }
 
