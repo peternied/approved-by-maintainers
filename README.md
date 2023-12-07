@@ -29,7 +29,7 @@ steps:
 - id: list-maintainers
   run: echo "maintainers='danny, ricky, bobby'" >> $GITHUB_ENV
 
-- uses: peternied/required-approval@v1
+- uses: peternied/required-approval@v1.2
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
     min-required: 1
