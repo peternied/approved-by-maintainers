@@ -36733,6 +36733,7 @@ async function run() {
   const requiredApprovers = core.getInput('required-approvers-list', { required: true })?.split(',').map(s => s.trim()).filter(a => a.length != 0);
   const mockApproversString = core.getInput('mock-approvers', { required: false, trimWhitespace: false });
 
+  console.log(`mockApproversString: '${mockApproversString}'`);
   let pullRequestApprovers;
   if (mockApproversString !== "") {
     const client = github.getOctokit(token);
