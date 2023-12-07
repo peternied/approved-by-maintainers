@@ -36735,7 +36735,7 @@ async function run() {
 
   console.log(`mockApproversString: '${mockApproversString}'`);
   let pullRequestApprovers;
-  if (mockApproversString !== "") {
+  if (mockApproversString.length == 0) {
     const client = github.getOctokit(token);
     const { data: reviewers } = await client.rest.pulls.listReviews({
         pull_number: pullRequestId,
