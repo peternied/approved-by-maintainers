@@ -38,7 +38,7 @@ async function run() {
     for await (const { data: reviews } of allReviews) {
       console.debug(`listReviews paged response response:\n ${JSON.stringify(reviews)}`);
       for (const review of reviews) {
-        if (review => review.state === 'APPROVED' && review.user?.login) {
+        if (review.state === 'APPROVED' && review.user?.login) {
           approvers.push(review.user?.login)
         }
       }
