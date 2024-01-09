@@ -27,16 +27,23 @@ async function run() {
   let pullRequestApprovers;
   if (mockApproversString.length == 0) {
     const client = github.getOctokit(token);
-    const { data: reviewers } = await client.rest.pulls.listReviews({
+    const allReviews = await client.paginate.iterator(client.rest.pulls.listReviews, {
         pull_number: pullRequestId,
         owner: github.context.repo.owner,
-        repo: github.context.repo.repo
+        repo: github.context.repo.repo,
+        per_page: 100,
     });
-    console.log(`listReviews response:\n ${JSON.stringify(reviewers)}`);
 
-    const approvers = reviewers
-        .filter(reviewer => reviewer.state === 'APPROVED' && reviewer.user?.login)
-        .map(reviewer => reviewer.user?.login)
+    let approvers = [];
+    for await (const { reviews: allReviews } of iterator) {
+      console.debug(`listReviews paged response response:\n ${JSON.stringify(reviews)}`);
+      for (const review of reviews) {
+        if (review => review.state === 'APPROVED' && review.user?.login) {
+          approvers.push(review.user?.login)
+        }
+      }
+    }
+
     console.log(`filtered to approvers:\n ${JSON.stringify(approvers)}`);
 
     pullRequestApprovers = approvers;
@@ -57,6 +64,12 @@ async function run() {
   } else {
     core.info(`Meets minimum number of approvals requirement with ${acceptedApprovers.length} approvals`);
   }
+}
+
+async function getAllReviews(pullRequestId, owner, repo) {
+
+
+  
 }
 
 run();
